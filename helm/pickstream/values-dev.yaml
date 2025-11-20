@@ -58,3 +58,6 @@ ingress:
 
 podDisruptionBudget:
   enabled: false
+
+monitoring:
+  enabled: false

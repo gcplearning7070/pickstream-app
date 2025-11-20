@@ -38,3 +38,6 @@ ingress:
     - secretName: pickstream-staging-tls
       hosts:
         - pickstream-staging.example.com
+
+monitoring:
+  enabled: false

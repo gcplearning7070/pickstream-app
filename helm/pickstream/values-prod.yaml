@@ -67,3 +67,6 @@ ingress:
 podDisruptionBudget:
   enabled: true
   minAvailable: 2
+
+monitoring:
+  enabled: false
