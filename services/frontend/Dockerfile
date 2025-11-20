@@ -17,9 +17,13 @@ RUN mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/proxy_temp \
     chown -R nginx:nginx /var/cache/nginx /var/run /tmp/nginx /etc/nginx && \
     chmod -R 755 /var/cache/nginx /var/run /tmp/nginx
 
-# Create a script to substitute environment variables
+# Create a script to substitute environment variables and detect DNS IP
 RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
-    echo 'envsubst "\$BACKEND_SERVICE_HOST \$BACKEND_SERVICE_PORT" < /etc/nginx/nginx.conf.template > /tmp/nginx/nginx.conf' >> /docker-entrypoint.sh && \
+    echo '# Get Kubernetes DNS IP from resolv.conf' >> /docker-entrypoint.sh && \
+    echo 'DNS_IP=$(grep nameserver /etc/resolv.conf | head -n1 | awk "{print \$2}")' >> /docker-entrypoint.sh && \
+    echo 'export DNS_IP' >> /docker-entrypoint.sh && \
+    echo 'echo "Using Kubernetes DNS IP: $DNS_IP"' >> /docker-entrypoint.sh && \
+    echo 'envsubst "\$BACKEND_SERVICE_HOST \$BACKEND_SERVICE_PORT \$DNS_IP" < /etc/nginx/nginx.conf.template > /tmp/nginx/nginx.conf' >> /docker-entrypoint.sh && \
     echo 'exec nginx -c /tmp/nginx/nginx.conf -g "daemon off;"' >> /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
