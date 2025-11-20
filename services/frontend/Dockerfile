@@ -10,10 +10,17 @@ COPY public /usr/share/nginx/html
 ENV BACKEND_SERVICE_HOST=pickstream-backend \
     BACKEND_SERVICE_PORT=8080
 
+# Create directories with proper permissions for non-root user
+RUN mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/proxy_temp \
+             /var/cache/nginx/fastcgi_temp /var/cache/nginx/uwsgi_temp \
+             /var/cache/nginx/scgi_temp /var/run /tmp/nginx && \
+    chown -R nginx:nginx /var/cache/nginx /var/run /tmp/nginx /etc/nginx && \
+    chmod -R 755 /var/cache/nginx /var/run /tmp/nginx
+
 # Create a script to substitute environment variables
 RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
-    echo 'envsubst "\$BACKEND_SERVICE_HOST \$BACKEND_SERVICE_PORT" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf' >> /docker-entrypoint.sh && \
-    echo 'exec nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    echo 'envsubst "\$BACKEND_SERVICE_HOST \$BACKEND_SERVICE_PORT" < /etc/nginx/nginx.conf.template > /tmp/nginx/nginx.conf' >> /docker-entrypoint.sh && \
+    echo 'exec nginx -c /tmp/nginx/nginx.conf -g "daemon off;"' >> /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
 # Health check
