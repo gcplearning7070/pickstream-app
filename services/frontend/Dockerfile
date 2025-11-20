@@ -23,7 +23,7 @@ RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
     echo 'DNS_IP=$(grep nameserver /etc/resolv.conf | head -n1 | awk '"'"'{print $2}'"'"')' >> /docker-entrypoint.sh && \
     echo 'export DNS_IP' >> /docker-entrypoint.sh && \
     echo 'echo "Using Kubernetes DNS IP: $DNS_IP"' >> /docker-entrypoint.sh && \
-    echo 'envsubst "$BACKEND_SERVICE_HOST $BACKEND_SERVICE_PORT $DNS_IP" < /etc/nginx/nginx.conf.template > /tmp/nginx/nginx.conf' >> /docker-entrypoint.sh && \
+    echo 'envsubst '"'"'$BACKEND_SERVICE_HOST $BACKEND_SERVICE_PORT $DNS_IP'"'"' < /etc/nginx/nginx.conf.template > /tmp/nginx/nginx.conf' >> /docker-entrypoint.sh && \
     echo 'exec nginx -c /tmp/nginx/nginx.conf -g "daemon off;"' >> /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
