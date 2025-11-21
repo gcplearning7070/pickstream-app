@@ -111,7 +111,7 @@ jobs:
           --set backend.image.tag=${{ github.sha }} \
           --set frontend.image.tag=${{ github.sha }} \
           --wait \
-          --timeout 5m
+          --timeout 10m
           
     - name: Verify deployment
       run: |
