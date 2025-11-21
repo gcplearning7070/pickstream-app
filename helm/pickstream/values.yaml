@@ -36,13 +36,6 @@ backend:
       cpu: 500m
       memory: 512Mi
   
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 5
-    targetCPUUtilizationPercentage: 70
-    targetMemoryUtilizationPercentage: 80
-  
   livenessProbe:
     httpGet:
       path: /actuator/health/liveness
@@ -124,29 +117,7 @@ frontend:
     - name: BACKEND_SERVICE_PORT
       value: "8080"
 
-# Ingress configuration
-ingress:
-  enabled: false
-
 # Service Account
 serviceAccount:
   create: true
-  annotations:
-    iam.gke.io/gcp-service-account: "pickstream-sa@gcp-terraform-demo-474514.iam.gserviceaccount.com"
   name: "pickstream"
-
-# Pod Disruption Budget
-podDisruptionBudget:
-  enabled: false
-
-# Network Policy
-networkPolicy:
-  enabled: false
-
-# Monitoring
-monitoring:
-  enabled: false
-  serviceMonitor:
-    enabled: false
-    interval: 30s
-    path: /actuator/prometheus
