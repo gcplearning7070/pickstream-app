@@ -3,7 +3,7 @@
 
 # Global settings
 global:
-  projectId: "gcp-terraform-demo-474514"
+  projectId: "gcp-terraform-478512"
   region: "us-central1"
   
 # Namespace
@@ -11,7 +11,7 @@ namespace: pickstream
 
 # Image registry
 imageRegistry: us-central1-docker.pkg.dev
-imageRepository: gcp-terraform-demo-474514/pickstream
+imageRepository: gcp-terraform-478512/pickstream
 
 # Backend service configuration
 backend:
