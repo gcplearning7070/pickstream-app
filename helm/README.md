@@ -12,13 +12,12 @@ Helm is a package manager for Kubernetes. It uses templates to deploy applicatio
 helm/
 └── pickstream/              # Helm chart for the application
     ├── Chart.yaml           # Chart metadata (name, version)
-    ├── values.yaml          # Default configuration values
-    ├── values-dev.yaml      # Development environment overrides
+    ├── values.yaml          # Configuration values
     └── templates/           # Kubernetes resource templates
         ├── backend/         # Backend deployment, service, HPA
         ├── frontend/        # Frontend deployment, service, HPA
-        ├── ingress.yaml     # External access configuration
-        └── namespace.yaml   # Namespace definition
+        ├── namespace.yaml   # Namespace definition
+        └── serviceaccount.yaml # Service account for pods
 ```
 
 ## Key Files Explained
@@ -27,18 +26,13 @@ helm/
 Defines chart metadata like name, version, and description.
 
 ### values.yaml
-Contains default configuration values:
+Contains all configuration values:
 - Image repositories and tags
 - Resource limits (CPU, memory)
-- Replica counts
+- Replica counts (1 for each service)
+- Autoscaling settings (enabled)
 - Service types and ports
 - Health check settings
-
-### values-dev.yaml
-Overrides for development environment:
-- Fewer replicas (saves resources)
-- Different resource limits
-- Development-specific settings
 
 ### templates/
 Kubernetes YAML files with Go templating:
@@ -51,13 +45,12 @@ Kubernetes YAML files with Go templating:
 - kubectl configured for your cluster
 - Helm 3 installed
 
-**Deploy to development:**
+**Deploy:**
 ```bash
 helm upgrade --install pickstream ./helm/pickstream \
   --namespace pickstream \
   --create-namespace \
   --values ./helm/pickstream/values.yaml \
-  --values ./helm/pickstream/values-dev.yaml \
   --set global.projectId=YOUR_GCP_PROJECT_ID \
   --set backend.image.tag=latest \
   --set frontend.image.tag=latest
@@ -74,8 +67,10 @@ kubectl get svc -n pickstream
 ### Common Settings
 
 **Replicas:**
-- Development: 2 backend, 1 frontend
-- Production: 3 backend, 2 frontend
+- Base: 1 backend, 1 frontend
+- Autoscaling: Scales up based on CPU/memory usage
+- Backend: min 1, max 5 pods
+- Frontend: min 1, max 3 pods
 
 **Resources:**
 Backend needs more CPU/memory than frontend (runs Java application)
@@ -113,7 +108,7 @@ image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
 This gets values from `values.yaml`:
 ```yaml
 backend:
-  replicaCount: 2
+  replicaCount: 1
   image:
     repository: us-central1-docker.pkg.dev/project/pickstream/backend
     tag: latest

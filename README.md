@@ -79,10 +79,11 @@ When you push to main:
 
 The Helm chart creates:
 - **Namespace:** `pickstream` (isolates resources)
-- **Backend Deployment:** 2 pods with Spring Boot
-- **Frontend Deployment:** 1 pod with Nginx
+- **Backend Deployment:** 1 pod with Spring Boot (autoscaling enabled)
+- **Frontend Deployment:** 1 pod with Nginx (autoscaling enabled)
 - **Backend Service:** Internal (ClusterIP)
 - **Frontend Service:** External (LoadBalancer)
+- **Service Account:** For pod identity
 
 ### Accessing Your Application
 
@@ -107,7 +108,7 @@ kubectl get svc pickstream-frontend -n pickstream
 3. CI/CD builds and deploys automatically
 
 ### Change Deployment Settings
-1. Edit `helm/pickstream/values.yaml` or `values-dev.yaml`
+1. Edit `helm/pickstream/values.yaml`
 2. Push to main
 3. CI/CD applies changes
 
