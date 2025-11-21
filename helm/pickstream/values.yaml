@@ -36,6 +36,9 @@ backend:
       cpu: 500m
       memory: 512Mi
   
+  autoscaling:
+    enabled: false
+  
   livenessProbe:
     httpGet:
       path: /actuator/health/liveness
